@@ -1,0 +1,21 @@
+{
+  "name": "weather-map",
+  "version": "1.0.0",
+  "description": "for weather map",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "pesach",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pesach020/Weather-map"
+  },
+  "dependencies": {
+    "jquery": "^3.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0"
+  }
+}
