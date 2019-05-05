@@ -1,45 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+let weather;
+let city = 'London';
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
-          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-          crossorigin=""/>
+//weather
+weather_api(city);
+function weather_api(city) {
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},uk&appid=cdd104fdbbc3e2addcd9c25dc00d191d`)
+        .then(response => response.json())
+        .then(data => {
+            let temperature_with_long_result = data['main']['temp'];
+            // convert from Kelvin to Celsius
+            temperature_with_long_result -= 273.15;
 
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
-            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-            crossorigin=""></script>
-    <link rel="stylesheet" type="text/css" href="./public/style.css">
-
-    <title>weather</title>
-</head>
-
-<body>
-<h1>weather</h1>
-<div id="mapid"></div>
-<script>
-    let weather;
-    let city = 'London';
-
-    //weather
-    weather_api(city);
-    function weather_api(city) {
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},uk&appid=cdd104fdbbc3e2addcd9c25dc00d191d`)
-            .then(response => response.json())
-            .then(data => {
-                let temperature_with_long_result = data['main']['temp'];
-                // convert from Kelvin to Celsius
-                temperature_with_long_result -= 273.15;
-
-                let temperature = temperature_with_long_result.toString().slice(0,-16);
-                console.log(temperature);
-                console.log(data);
-                return  weather = data['weather']['0']['main'] +' ' + temperature +'&#176C';
-            });
-    }
-
+            let temperature = temperature_with_long_result.toString().slice(0,-16);
+            console.log(temperature);
+            console.log(data);
+            return  weather = data['weather']['0']['main'] +' ' + temperature +'&#176C';
+        });
+}
+map_api();
+function map_api(){
     let mymap = L.map('mapid').setView([51.49, -0.13], 8);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -55,15 +34,6 @@
 
     //popup
     marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-
-    //
-    // standalone popup
-    //    var popup = L.popup()
-    //        .setLatLng([51.5, -0.09])
-    //        .setContent("I am a standalone popup.")
-    //        .openOn(mymap);
-
-
 
     let popup = L.popup();
 
@@ -112,8 +82,4 @@
         }
     }
     mymap.on('click', onMapClick);
-</script>
-
-</body>
-
-</html>
+}
