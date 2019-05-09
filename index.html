@@ -1,119 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+<meta charset="utf-8"/>
 
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
-
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
             integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
             crossorigin=""></script>
-    <link rel="stylesheet" type="text/css" href="./public/style.css">
-
+    <link rel="stylesheet" href="style.css"/>
     <title>weather</title>
 </head>
 
 <body>
-<h1>weather</h1>
-<div id="mapid"></div>
-<script>
-    let weather;
-    let city = 'London';
 
-    //weather
-    weather_api(city);
-    function weather_api(city) {
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},uk&appid=cdd104fdbbc3e2addcd9c25dc00d191d`)
-            .then(response => response.json())
-            .then(data => {
-                let temperature_with_long_result = data['main']['temp'];
-                // convert from Kelvin to Celsius
-                temperature_with_long_result -= 273.15;
-
-                let temperature = temperature_with_long_result.toString().slice(0,-16);
-                console.log(temperature);
-                console.log(data);
-                return  weather = data['weather']['0']['main'] +' ' + temperature +'&#176C';
-            });
-    }
-
-    let mymap = L.map('mapid').setView([51.49, -0.13], 8);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoicGVzYWNoMDIwIiwiYSI6ImNqdjJ6N205cTA0Ym00ZXAyZzZpdXB0NDIifQ.Hgm0-HIyr7ymxDNKDs-1nA'
-    }).addTo(mymap);
-
-    // marker
-    let marker = L.marker([51.49, -0.13], {
-    }).addTo(mymap);
-
-
-    //popup
-    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
-
-    //
-    // standalone popup
-    //    var popup = L.popup()
-    //        .setLatLng([51.5, -0.09])
-    //        .setContent("I am a standalone popup.")
-    //        .openOn(mymap);
-
-
-
-    let popup = L.popup();
-
-    function onMapClick(e) {
-        popup
-            .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng.toString())
-            .openOn(mymap);
-
-
-        let coor = e.latlng.toString();
-        // seperte to two arguments in array
-        let re = /(\s\s)/;
-
-        // push to array
-        let ar = coor.split(re);
-        console.log('1 ' + ar);
-
-
-        let coordinator_y = ar[0][7] + ar[0][8];// + ar[0][9] + ar[0][10] + ar[0][11];
-        let coordinator_x = ar[0][18] + ar[0][19];// + ar[0][20] + ar[0][21] + ar[0][22];
-        //
-        console.log('2 ' + coordinator_y);
-        console.log('3 ' + coordinator_x);
-        // London
-        if (coordinator_y === '51' && coordinator_x === '-0' || coordinator_x === '0.') {
-            // city === 'london';
-            weather_api('london');
-
-            popup
-                .setContent("London " + weather)
-                .openOn(mymap);
-            // Oxford
-        } else if (coordinator_y === '51' && coordinator_x === '-1') {
-            //  city === 'Oxford';
-            weather_api('oxford');
-            popup
-                .setContent("Oxford " + weather)
-                .openOn(mymap);
-            // Portsmouth
-        }else if(coordinator_y === '50' && coordinator_x === '-1'){
-            weather_api('Portsmouth');
-            popup
-                .setContent("Portsmouth " + weather)
-                .openOn(mymap);
-        }
-    }
-    mymap.on('click', onMapClick);
-</script>
-
+<header><h1>weather map</h1></header>
+<main class="container">
+    <div id="showData">
+        <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown"
+               aria-haspopup="true"
+               aria-expanded="false">Select City</a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" onclick="cities('london')">London</a>
+                <a class="dropdown-item" onclick="cities('Portsmouth')">Portsmouth</a>
+                <a class="dropdown-item" onclick="cities('Oxford')">Oxford</a>
+                <a class="dropdown-item" onclick="cities('Brighton')">Brighton</a>
+                <a class="dropdown-item" onclick="cities('Canterbury')">Canterbury</a>
+                <a class="dropdown-item" onclick="cities('Manchester')">Manchester</a>
+                <a class="dropdown-item" onclick="cities('Liverpool')">Liverpool</a>
+                <a class="dropdown-item" onclick="cities('Birmingham')">Birmingham</a>
+            </div>
+        </div>
+        <label>City:</label><span id="City_id"></span><br>
+        <label>Description:</label><span id="Description_id"></span><br>
+        <label>Temperature:</label><span id="Temperature_id"></span><br>
+        <label>Wind speed:</label><span id="Wind_id"></span><br>
+        <label>Humidity:</label><span id="Humidity_id"></span>
+    </div>
+    <div class="col-md-8" id="mapid"></div>
+</main>
+<script src="./jsClient.js"></script>
 </body>
 
 </html>
